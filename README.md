@@ -18,26 +18,9 @@ using simulated sensors by [MIMIC MQTT Simulator](https://www.gambitcomm.com/sit
 If you want to install a version of this demo pointing to your local MQTT.Cool,
 follows these steps.
 
-* Configure an MQTT.Cool instance. Please refer to mqtt.cool web site
-[download page](https://mqtt.cool/download/latest-server) to find the MQTT.Cool
-download package. MQTT.Cool comes with a set of predefined configurations for
-connecting with local MQTT server instances, as well as with the most common
-publicly accessible brokers. If you want to provide a new custom configuration,
-open the `mqtt_master_connector_conf.xml` file located under
-`<MQTT.COOL_HOME>/mqtt_connectors` and provide a set of entries similar to the
-following (please refer to the inline documentation for more in-depth
-information on how to configure broker connection parameters):
-
-  ```xml
-  ...
-  <!-- MQTT broker connection parameters for a local instance
-       listening on port 1883, aliased by "mybroker". -->
-  <param name="mybroker.server_address">tcp://localhost:1883</param>
-  <param name="mybroker.connection_timeout">5</param>
-  <param name="mybroker.keep_alive">20</param>
-  ...
-  ```
-
+* Download MQTT.Cool from the mqtt.cool web site
+[download page](https://mqtt.cool/download/latest-server) and unpack it (see
+the [Quick Start](https://docs.mqtt.cool/server/guides/MQTT.Cool+Getting+Started+Guide.html#_quick_start) section of *Getting Started Guide* for more details).
 * Launch the MQTT.Cool server.
 * Download this project.
 * As the latest version of the MQTT.Cool JavaScript library is always available
