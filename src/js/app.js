@@ -29,7 +29,7 @@ $(function () {
   //loggerProvider.addLoggerAppender(new mqttcool.ConsoleAppender('DEBUG', '*'));
 
   mqttcool.LoggerManager.setLoggerProvider(loggerProvider);
-  const MQTTCOOL_HOST = 'https://cloud.mqtt.cool';
+  const MQTTCOOL_HOST = 'http://localhost:8080';
   const BROKER_URL = 'tcp://broker.mqtt.cool:1883';
 
   // Max values for sliders.
