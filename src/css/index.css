@@ -1,7 +1,7 @@
 /*
   MQTT.Cool - https://mqtt.cool
 
-  Physical Demo fo IoT Tech Expo Nort America 2018
+  MQTT Throttling Demo 
 
   Copyright (c) Lightstreamer Srl
 
@@ -21,8 +21,8 @@
 html, body {
   width: 100%;
   margin: 0;
-  background-color: black;
-  color: #cfb53c;
+  background-color: white;
+  color: #006666;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -43,6 +43,7 @@ html, body {
   position: absolute;
   width: 34%;
   text-align: center;
+  font-style: italic;
   top: 20%;
   font-size: 3em;
   left: 30%;
@@ -52,15 +53,16 @@ html, body {
 
 #caption {
   position: relative;
-  margin-top: 1%;
-  height: 110px;
+  margin-top: 2%;
+  margin-bottom: 3%;
+  height: 1.9em;
 }
 
 #text {
   position: absolute;
   width: 100%;
-  left: 3%;
-  font-size: 0.9em;
+  text-align: center;
+  font-size: 1.1em;
 }
 
 #mqttcool_logo {
@@ -69,7 +71,7 @@ html, body {
   width: 20%;
   right: 3%;
   height: 100%;
-  top: 10px
+  top: 30px
 }
 
 #contents {
