@@ -34,7 +34,7 @@ $(function () {
 
   // Max values for sliders.
   const MAX_FREQ_VALUE = 4.1;
-  const MAX_BANDWIDTH_VALUE = 5.1;
+  const MAX_BANDWIDTH_VALUE = 33;
 
   // Global chart options
   const TIME_WINDOW = 10; // seconds
@@ -53,7 +53,7 @@ $(function () {
 
     this.raw = {
       counter: 0,
-      chartColor: 'yellow',
+      chartColor: '#f57600',
 
       chartOptions: {
         data: [],
@@ -62,13 +62,13 @@ $(function () {
           show: true,
           fill: true,
           fillOpacity: 0.5,
-          fillColor: 'yellow',
+          fillColor: '#f57600',
           lineWidth: 1
         },
         points: {
           show: false,
           fillOpacity: 0.5,
-          fillColor: 'yellow'
+          fillColor: '#f57600'
         }
       },
       values: []
@@ -156,13 +156,6 @@ $(function () {
         <p id="' + self.chartId + '_freqText" class="rateText"></p> \
       </div>';
     $('#' + self.chartId).after(frequencySelectorTemplate);
-
-    const bandwidthSelectorTemplate = '\
-      <div class="bandwidthSliderContainer sliders">\
-        <p class="bandwidthDescription">Bandwidth selector</p>\
-        <input id="' + self.chartId + '_bandwidthSelector" type="range" min="0.1" max="' + MAX_BANDWIDTH_VALUE + '" step="0.5" data-orientation="horizontal">\
-        <p id="' + self.chartId + '_bandwidthText" class="rateText"></p>\
-      </div>';
 
     var subcounter = 0;
     initFrequencySlider(MAX_FREQ_VALUE, function (subOptions) {
@@ -313,7 +306,7 @@ function refreshCharts(sensors, timeWindow, refreshInterval) {
   const start = new Date().getTime() - 10 * 1000;
   return setInterval(function () {
     var currentDate = new Date();
-    var tsMax = currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000;
+    var tsMax = currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 - 2000;
     var tsMin = new Date(tsMax - timeWindow * 1000).getTime();
     for (var i = 0; i < sensors.length; i++) {
       drawCharts(sensors[i], 10000, start, tsMin, tsMax);
