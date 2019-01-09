@@ -250,7 +250,7 @@ $(function () {
   mqttcool.openSession(MQTTCOOL_HOST, 'demouser', '', {
     onConnectionSuccess: function (mqttCoolSession) {
       // Very simple attempt to avoid clientId collisions.
-      const clientId = new Date().getTime().substring(16);
+      const clientId = 'client-' + new Date().getTime().toString();
       
       rawClient = mqttCoolSession.createClient(BROKER_URL, clientId);
 
