@@ -34,7 +34,7 @@ $(function () {
 
   // Max values for sliders.
   const MAX_FREQ_VALUE = 4.1;
-  const MAX_BANDWIDTH_VALUE = 33;
+  const MAX_BANDWIDTH_VALUE = 38;
 
   // Global chart options
   const TIME_WINDOW = 10; // seconds
