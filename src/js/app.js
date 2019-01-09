@@ -249,7 +249,10 @@ $(function () {
   // Set up rawClient for reading distance detections.
   mqttcool.openSession(MQTTCOOL_HOST, 'demouser', '', {
     onConnectionSuccess: function (mqttCoolSession) {
-      rawClient = mqttCoolSession.createClient(BROKER_URL, 'pippo');
+      // Very simple attempt to avoid clientId collisions.
+      const clientId = new Date().getTime().substring(16);
+      
+      rawClient = mqttCoolSession.createClient(BROKER_URL, clientId);
 
       // Set the message handler.
       var messageHandler = new MessageHandler('raw');
