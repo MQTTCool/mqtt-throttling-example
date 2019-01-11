@@ -19,12 +19,13 @@ The demo leverages the flexibility and power offered by [MIMIC MQTT Simulator](h
 by which it is extremely easy to generate unlimited range of simulated scenarios.
 
 In this case, we simulate a set of sensors that:
-- Continuously detect the distance between themselves an fictitious moving object.
+- Continuously detect the distance between themselves and fictitious moving objects.
 - Publish real-time data to a specific topic of the MQTT broker listening at `tcp://broker.mqtt.cool:1883`.<br/>
 
-To keep things simple, the distance varies as a sine wave. Furthermore, waves are generated with  different frequencies to show different traffic patterns.
+To keep things simple, distances vary as sine waves. Furthermore, waves are
+generated with different frequencies to show different traffic patterns.
 
-The web application submits an MQTT subscriptions for each sensor/topic to 
+The web application submits an MQTT subscription for each sensor/topic to 
 receive real-time data and displays them on the relative chart.
 
 For each chart, a frequency selector can be handled to dynamically change the
