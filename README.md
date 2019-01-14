@@ -1,6 +1,6 @@
 # MQTT.Cool - MQTT Throttling Demo - HTML Client
 
-The **MQTT Throttling Demo** is a demonstration of MQTT Cool data throttling 
+The **MQTT Throttling Demo** is a demonstration of MQTT.Cool data throttling 
 using simulated sensors by [MIMIC MQTT Simulator](https://www.gambitcomm.com/site/mqttsimulator.php).
 
 ## Live Demo
