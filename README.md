@@ -7,7 +7,7 @@ using simulated sensors by [MIMIC MQTT Simulator](https://www.gambitcomm.com/sit
 
 [![Live Demo](screen-large.gif)](https://demos.mqtt.cool/mqtt-throttling)
 
-### [![](http://demos.lightstreamer.com/site/img/play.png) View live demo](https://demos.mqtt.cool/mqtt-throttling)
+### [![](http://demos.mqtt.cool/resources/play.png) View live demo](https://demos.mqtt.cool/mqtt-throttling)
 
 
 ## Details
