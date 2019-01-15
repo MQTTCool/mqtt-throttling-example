@@ -20,7 +20,7 @@
 "use strict";
 $(function () {
   // Define urls for MQTT.Cool and external broker.
-  const MQTTCOOL_HOST = 'https://cloud.mqtt.cool';
+  const MQTTCOOL_HOST = 'http://localhost:8080';
   const BROKER_URL = 'tcp://broker.mqtt.cool:1883';
 
   // Max values for sliders.
@@ -32,8 +32,8 @@ $(function () {
   const MAX_SAMPLES = 100;
   const CHART_REFRESH_INTERVAL = 50; // milliseconds
 
-  // Wraps a subscription to a specific IoT simulated Sensor and manipulates
-  // chart displaying.
+  // IoT Sensor manager, which wraps a subscription to a specific IoT simulated 
+  // sensor and manipulates chart displaying.
   const Sensor = function (sensorId, chartId) {
     this.sensorId = sensorId;
     this.chartId = chartId;
@@ -210,8 +210,11 @@ $(function () {
     lightStreamerClient.connectionOptions.setMaxBandwidth(value);
   });
 
+  // Start displaying data.
   refreshCharts(SENSORS, TIME_WINDOW, CHART_REFRESH_INTERVAL);
 
+  // Setup message handler which receive data from subscription and dispatches
+  // them to the relative IoT sensor manager.
   const MessageHandler = function (sensorType) {
     this.onMessageArrived =
       function (message) {
@@ -227,7 +230,7 @@ $(function () {
       };
   }
 
-  // Set up rawClient for reading distance detections.
+  // Set up rawClient for receiving real-time telemetry data.
   mqttcool.openSession(MQTTCOOL_HOST, 'demouser', '', {
     onConnectionSuccess: function (mqttCoolSession) {
       // Very simple attempt to avoid clientId collisions.
@@ -253,8 +256,8 @@ $(function () {
     }
   });
 
-  // Set up up throttledClient for reading distance detections and further
-  // manipulation of frequency and bandwidth.
+  // Set up up throttledClient for receiving real-time telemetry data that can
+  // be further manipulated in frequency and bandwidth.
   mqttcool.openSession(MQTTCOOL_HOST, 'demouser', '', {
     onLsClient: function (lsClient) {
       // Cache reference to the LightstreamerClient object for further
@@ -282,18 +285,17 @@ $(function () {
 });
 
 function refreshCharts(sensors, timeWindow, refreshInterval) {
-  const start = new Date().getTime() - 10 * 1000;
   return setInterval(function () {
     var currentDate = new Date();
-    var tsMax = currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 - 2000;
+    var tsMax = currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 - 3000;
     var tsMin = new Date(tsMax - timeWindow * 1000).getTime();
     for (var i = 0; i < sensors.length; i++) {
-      drawCharts(sensors[i], 10000, start, tsMin, tsMax);
+      drawCharts(sensors[i], 10000, tsMin, tsMax);
     }
   }, refreshInterval);
 }
 
-function drawCharts(sensor, maxDistance, start, tsMin, tsMax) {
+function drawCharts(sensor, maxDistance, tsMin, tsMax) {
   var container = document.getElementById(sensor.chartId);
   function xTicksFn(n) {
     return Math.round((n - sensor.startTimestamp) / 1000) + 's';
