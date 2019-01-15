@@ -19,16 +19,7 @@
 */
 "use strict";
 $(function () {
-  var loggerProvider = new mqttcool.SimpleLoggerProvider();
-  loggerProvider.addLoggerAppender(new mqttcool.ConsoleAppender('INFO', 'mqtt.cool.subscriptions'));
-  /*  loggerProvider.addLoggerAppender(
-      new ConsoleAppender('DEBUG', 'mqtt.cool.test'));
-    loggerProvider.addLoggerAppender(
-      new ConsoleAppender('DEBUG', 'mqtt.cool.store'));*/
-
-  //loggerProvider.addLoggerAppender(new mqttcool.ConsoleAppender('DEBUG', '*'));
-
-  mqttcool.LoggerManager.setLoggerProvider(loggerProvider);
+  // Define urls for MQTT.Cool and external broker.
   const MQTTCOOL_HOST = 'https://cloud.mqtt.cool';
   const BROKER_URL = 'tcp://broker.mqtt.cool:1883';
 
@@ -115,7 +106,6 @@ $(function () {
     };
 
     function initFrequencySlider(maxFreqValue, onSlideEndCallback) {
-      console.log('invoked initFrequencySlider');
       $('#' + self.chartId + '_frequencySelector').attr('value', maxFreqValue);
       updateFreqText(maxFreqValue);
 
@@ -149,6 +139,7 @@ $(function () {
       }
     };
 
+    // Prepare template to be applied to every frequency selector.
     const frequencySelectorTemplate = '\
       <div id="' + self.chartId + '_freqContainer" class="freqSliderContainer sliders"> \
         <p class="rateDescription">Frequency Selector</p> \
@@ -157,15 +148,11 @@ $(function () {
       </div>';
     $('#' + self.chartId).after(frequencySelectorTemplate);
 
-    var subcounter = 0;
+    // Initialize the relative frequency slider and pass the callback function
+    // to be invoked at every change.
     initFrequencySlider(MAX_FREQ_VALUE, function (subOptions) {
-      // Subscribe again to the same topic, with updated options.
-      console.log(subcounter++ + ') Subscribing at ' + JSON.stringify(subOptions));
+      // Subscribe again to the same topic with updated options.
       throttledClient.subscribe(self.topic, subOptions);
-
-      /*console.log(subcounter++ + ') Subscribing at ' + JSON.stringify(subOptions));
-      throttledClient.subscribe(self.topic, subOptions);*/
-
     });
   };
 
@@ -217,8 +204,9 @@ $(function () {
     }
   }
 
+  // Initialize the max bandwidth slider and pass the callback function
+  // to be invoked at every change.
   initBandwidthSlider(MAX_BANDWIDTH_VALUE, function (value) {
-    // Update the max bandwidth.
     lightStreamerClient.connectionOptions.setMaxBandwidth(value);
   });
 
@@ -254,23 +242,14 @@ $(function () {
         console.log('Connection Lost: ' + JSON.stringify(res));
       }
 
-      rawClient.onReconnectionStart = function () {
-        console.log('Starting reconnecting...');
-      }
-
-      rawClient.onReconnectionComplete = function () {
-        console.log('Reconnection completed...');
-      }
-
       rawClient.connect({
         onSuccess: function () {
-          // Once connected, subscribe to the 'distance' topic and start charts.
+          // Once connected, subscribe to the topic relative to each sensor.
           for (var i = 0; i < SENSORS.length; i++) {
             rawClient.subscribe(SENSORS[i].topic);
           }
         }
       });
-
     }
   });
 
@@ -291,7 +270,7 @@ $(function () {
       throttledClient.onMessageArrived = messageHandler.onMessageArrived;
 
       throttledClient.connect({
-        // Once connected, subscribe to the topic associated with the sensor.
+        // Once connected, subscribe to the topic relative to each sensor.
         onSuccess: function () {
           for (var i = 0; i < SENSORS.length; i++) {
             throttledClient.subscribe(SENSORS[i].topic);
