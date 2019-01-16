@@ -20,7 +20,7 @@
 "use strict";
 $(function () {
   // Define urls for MQTT.Cool and external broker.
-  const MQTTCOOL_HOST = 'http://localhost:8080';
+  const MQTT_COOL_URL = 'http://localhost:8080';
   const BROKER_URL = 'tcp://broker.mqtt.cool:1883';
 
   // Max values for sliders.
@@ -231,7 +231,7 @@ $(function () {
   }
 
   // Set up rawClient for receiving real-time telemetry data.
-  mqttcool.openSession(MQTTCOOL_HOST, 'demouser', '', {
+  mqttcool.openSession(MQTT_COOL_URL, 'demouser', '', {
     onConnectionSuccess: function (mqttCoolSession) {
       // Very simple attempt to avoid clientId collisions.
       const clientId = 'client-' + new Date().getTime().toString();
@@ -258,7 +258,7 @@ $(function () {
 
   // Set up up throttledClient for receiving real-time telemetry data that can
   // be further manipulated in frequency and bandwidth.
-  mqttcool.openSession(MQTTCOOL_HOST, 'demouser', '', {
+  mqttcool.openSession(MQTT_COOL_URL, 'demouser', '', {
     onLsClient: function (lsClient) {
       // Cache reference to the LightstreamerClient object for further
       // manipulation on bandwidth.
