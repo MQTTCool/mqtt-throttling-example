@@ -56,6 +56,12 @@ In other words, when a subscription has a chance to be updated (based on a
 round-robin algorithm), it will receive the very latest available message,
 not an old one.
 
+### Overall Architecture
+
+Here the overall architecture of the demo:
+
+![](mqtt-throttling-demo-architecture.png)
+
 ## Install
 
 If you want to install a version of this demo pointing to your local MQTT.Cool,
