@@ -15,7 +15,7 @@ using simulated sensors by [MIMIC MQTT Simulator](https://www.gambitcomm.com/sit
 The **MQTT Throttling Demo** uses the MQTT.Cool Web Client API to show how 
 MQTT.Cool can be used to send real-time telemetry data through the Web and,
 very important, how incoming update flow can be further manipulated in terms of
-bandwidth and frequency management.
+bandwidth and frequency.
 
 The demo leverages the flexibility and power offered by [MIMIC MQTT Simulator](https://www.gambitcomm.com/site/mqttsimulator.php),
 by which it is extremely easy to generate unlimited range of simulated scenarios.
