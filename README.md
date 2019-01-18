@@ -32,7 +32,7 @@ The web application submits an MQTT subscription for each sensor/topic to
 receive real-time data and displays them on the relative chart.
 
 For each chart, a frequency selector can be handled to dynamically change the
-maximum update rate of incoming message of the related sensor. 
+maximum update rate of incoming messages of the related sensor. 
 
 A max bandwidth selector allows you to change the bandwidth globally used by
 subscriptions.
