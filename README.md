@@ -18,7 +18,8 @@ very important, how incoming update flow can be further manipulated in terms of
 bandwidth and frequency.
 
 The demo leverages the flexibility and power offered by [MIMIC MQTT Simulator](https://www.gambitcomm.com/site/mqttsimulator.php),
-by which it is extremely easy to generate unlimited range of simulated scenarios.
+by which it is extremely easy to generate an unlimited range of simulated
+scenarios.
 
 In this case, we simulate a set of sensors that:
 - Continuously detect the distance between themselves and fictitious moving objects.
