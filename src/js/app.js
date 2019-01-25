@@ -216,10 +216,6 @@ $(function () {
       });
     },
 
-    onConnectionFailure: function (errorType, errorCode, errMessage) {
-      console.log(errMessage);
-    },
-
     onLsClient: function (lightstreamerClient) {
       // Cache reference to the LightstreamerClient object for further
       // manipulation of bandwidth.
@@ -270,7 +266,6 @@ $(function () {
         value = 'Unlimited';
       }
       $('#bandwidthText').text(value + ' kbps');
-      console.log('Updating max bandwidth to ' + value);
       return value;
     }
   }
