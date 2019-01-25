@@ -42,6 +42,7 @@ $(function () {
     this.maxDistance = 0;
     this.subCounter = 0;
 
+    // Defines properties for the non-throttled chart
     this.raw = {
       counter: 0,
       chartColor: '#f57600',
@@ -65,6 +66,7 @@ $(function () {
       values: []
     };
 
+    // Defines properties for the throttled chart
     this.throttled = {
       counter: 0,
       chartColor: 'red',
