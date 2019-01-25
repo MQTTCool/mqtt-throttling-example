@@ -116,14 +116,16 @@ $(function () {
         onSlide: function (position, value) {
           value = updateFreqText(value);
         },
-        onSlideEnd: function (position, value) {
-          value = updateFreqText(value);
+        onSlideEnd: function (position, newValue) {
+          newValue = updateFreqText(newValue);
 
           // Prepare the basic subscriptions options.
           const subOptions = {};
-          if (value !== 'Unlimited') {
-            subOptions['maxFrequency'] = value;
+          if (newValue !== 'Unlimited') {
+            subOptions['maxFrequency'] = newValue;
           }
+
+          // Trigger the callback.
           onSlideEndCallback(subOptions);
         }
       });
