@@ -19,7 +19,7 @@
 */
 "use strict";
 $(function () {
-  // Define urls for MQTT.Cool and external broker.
+  // Define urls for MQTT.Cool and the external MQTT broker.
   const MQTT_COOL_URL = 'http://localhost:8080';
   const BROKER_URL = 'tcp://broker.mqtt.cool:1883';
 
@@ -32,9 +32,9 @@ $(function () {
   const MAX_SAMPLES = 100;
   const CHART_REFRESH_INTERVAL = 50; // milliseconds
 
-  // IoT Sensor manager, which wraps a subscription to a specific IoT simulated 
+  // Sensor wrapper, which manges MQTT subscription to a specific IoT simulated 
   // sensor and manipulates chart displaying.
-  const Sensor = function (sensorId, chartId) {
+  function Sensor(sensorId, chartId) {
     this.sensorId = sensorId;
     this.chartId = chartId;
     this.topic = '/gambit/' + this.sensorId + '/telemetry';
@@ -99,15 +99,15 @@ $(function () {
         + ':' + minute + ':' + second + '.' + milliseconds).getTime();
 
       values.push([realTimeTimestamp, realTimeDistance]);
-      if (self[type].counter++ > maxSamples) {
+      if (self[type].counter++ > MAX_SAMPLES) {
         values.shift();
       }
       self[type].chartOptions.data = values;
     };
 
-    function initFrequencySlider(maxFreqValue, onSlideEndCallback) {
-      $('#' + self.chartId + '_frequencySelector').attr('value', maxFreqValue);
-      updateFreqText(maxFreqValue);
+    function initFrequencySelector(onSlideEndCallback) {
+      $('#' + self.chartId + '_frequencySelector').attr('value', MAX_FREQ_VALUE);
+      updateFreqText(MAX_FREQ_VALUE);
 
       $('#' + self.chartId + '_frequencySelector').rangeslider({
         polyfill: false,
@@ -118,11 +118,7 @@ $(function () {
           value = updateFreqText(value);
 
           // Prepare the basic subscriptions options.
-          var subOptions = {
-            onSuccess: function () {
-              console.log('Subscribed');
-            }
-          };
+          const subOptions = {};
           if (value !== 'Unlimited') {
             subOptions['maxFrequency'] = value;
           }
@@ -131,7 +127,7 @@ $(function () {
       });
 
       function updateFreqText(value) {
-        if (value === maxFreqValue) {
+        if (value === MAX_FREQ_VALUE) {
           value = 'Unlimited';
         }
         $('#' + self.chartId + '_freqText').text(value + ' updates/second');
@@ -150,13 +146,12 @@ $(function () {
 
     // Initialize the relative frequency slider and pass the callback function
     // to be invoked at every change.
-    initFrequencySlider(MAX_FREQ_VALUE, function (subOptions) {
+    initFrequencySelector(function (subOptions) {
       // Subscribe again to the same topic with updated options.
       throttledClient.subscribe(self.topic, subOptions);
     });
   };
 
-  // Array of IoT sensors pushing real-time data to the MQTT broker.
   const SENSORS = [
     new Sensor('20:19:AB:F4:0D:0D', 'sensor1'),
     new Sensor('20:19:AB:F4:0D:0E', 'sensor2'),
@@ -170,18 +165,92 @@ $(function () {
     new Sensor('20:19:AB:F4:0D:16', 'sensor10')
   ];
 
-  // MqttClient instance with throttled updates
+  // MqttClient instance for receiving throttled data
   var throttledClient;
 
-  // MqttClient instance with raw updates
+  // MqttClient instance for receiving non-throttled data
   var rawClient;
 
   // LightstreamerClient instance for bandwidth settings.
-  var lightStreamerClient;
+  var lightstreamerClientRef;
 
-  function initBandwidthSlider(maxBandwidthValue, onSlideEnd) {
-    $('#bandwidthSelector').attr('value', maxBandwidthValue);
-    updateBandwidthText(maxBandwidthValue);
+  // Initialize the max bandwidth selector and pass the callback function to be
+  // invoked at every change.
+  initBandwidthSelector(function (value) {
+    lightstreamerClientRef.connectionOptions.setMaxBandwidth(value);
+  });
+
+  // Start displaying data.
+  refreshCharts(SENSORS, TIME_WINDOW, CHART_REFRESH_INTERVAL);
+
+  // Setup message handler for processing MQTT messages received from 
+  // subscription and dispatches them to the relative sensor wrapper.
+  const MessageHandler = function (sensorType) {
+    return function (message) {
+      const sensor = SENSORS.find(function (s) {
+        return s.topic == message.destinationName;
+      });
+      const payload = JSON.parse(message.payloadString);
+      sensor.update(sensorType, payload);
+    };
+  }
+
+  // Set up up throttledClient for receiving real-time telemetry data that can
+  // be further manipulated in frequency and bandwidth.
+  mqttcool.openSession(MQTT_COOL_URL, 'demouser', '', {
+    onConnectionSuccess: function (mqttCoolSession) {
+      throttledClient = mqttCoolSession.createClient(BROKER_URL);
+
+      // Set the message handler.
+      throttledClient.onMessageArrived = new MessageHandler('throttled');
+
+      throttledClient.connect({
+        // Once connected, subscribe to the topic relative to each sensor.
+        onSuccess: function () {
+          for (var i = 0; i < SENSORS.length; i++) {
+            throttledClient.subscribe(SENSORS[i].topic);
+          }
+        }
+      });
+    },
+
+    onConnectionFailure: function (errorType, errorCode, errMessage) {
+      console.log(errMessage);
+    },
+
+    onLsClient: function (lightstreamerClient) {
+      // Cache reference to the LightstreamerClient object for further
+      // manipulation of bandwidth.
+      lightstreamerClientRef = lightstreamerClient;
+    },
+  });
+
+  // Set up rawClient for receiving non-throttled real-time telemetry data.
+  mqttcool.openSession(MQTT_COOL_URL, 'demouser', '', {
+    onConnectionSuccess: function (mqttCoolSession) {
+      // Very simple attempt to avoid clientId collisions.
+      const clientId = 'client-' + new Date().getTime().toString();
+
+      rawClient = mqttCoolSession.createClient(BROKER_URL, clientId);
+
+      // Set the message handler.
+      rawClient.onMessageArrived = new MessageHandler('raw');
+
+      rawClient.connect({
+        onSuccess: function () {
+          // Once connected, subscribe to the topic relative to each sensor.
+          for (var i = 0; i < SENSORS.length; i++) {
+            rawClient.subscribe(SENSORS[i].topic);
+          }
+        }
+      });
+    }
+  });
+
+
+  function initBandwidthSelector(onSlideEnd) {
+    $('#bandwidthSelector').attr('value', MAX_BANDWIDTH_VALUE);
+    updateBandwidthText(MAX_BANDWIDTH_VALUE);
 
     $('#bandwidthSelector').rangeslider({
       polyfill: false,
@@ -195,7 +264,7 @@ $(function () {
     });
 
     function updateBandwidthText(value) {
-      if (value === maxBandwidthValue) {
+      if (value === MAX_BANDWIDTH_VALUE) {
         value = 'Unlimited';
       }
       $('#bandwidthText').text(value + ' kbps');
@@ -204,137 +273,60 @@ $(function () {
     }
   }
 
-  // Initialize the max bandwidth slider and pass the callback function
-  // to be invoked at every change.
-  initBandwidthSlider(MAX_BANDWIDTH_VALUE, function (value) {
-    lightStreamerClient.connectionOptions.setMaxBandwidth(value);
-  });
-
-  // Start displaying data.
-  refreshCharts(SENSORS, TIME_WINDOW, CHART_REFRESH_INTERVAL);
-
-  // Setup message handler which receive data from subscription and dispatches
-  // them to the relative IoT sensor manager.
-  const MessageHandler = function (sensorType) {
-    this.onMessageArrived =
-      function (message) {
-        try {
-          const sensor = SENSORS.find(function (s) {
-            return s.topic == message.destinationName;
-          });
-          const payload = JSON.parse(message.payloadString);
-          sensor.update(sensorType, payload, MAX_SAMPLES);
-        } catch (e) {
-          console.log(e);
-        }
-      };
+  function refreshCharts(sensors, timeWindow, refreshInterval) {
+    return setInterval(function () {
+      var currentDate = new Date();
+      var tsMax = currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 - 3000;
+      var tsMin = new Date(tsMax - timeWindow * 1000).getTime();
+      for (var i = 0; i < sensors.length; i++) {
+        drawCharts(sensors[i], 10000, tsMin, tsMax);
+      }
+    }, refreshInterval);
   }
 
-  // Set up rawClient for receiving real-time telemetry data.
-  mqttcool.openSession(MQTT_COOL_URL, 'demouser', '', {
-    onConnectionSuccess: function (mqttCoolSession) {
-      // Very simple attempt to avoid clientId collisions.
-      const clientId = 'client-' + new Date().getTime().toString();
-      
-      rawClient = mqttCoolSession.createClient(BROKER_URL, clientId);
+  function drawCharts(sensor, maxDistance, tsMin, tsMax) {
+    var container = document.getElementById(sensor.chartId);
+    function xTicksFn(n) {
+      return Math.round((n - sensor.startTimestamp) / 1000) + 's';
+    }
 
-      // Set the message handler.
-      var messageHandler = new MessageHandler('raw');
-      rawClient.onMessageArrived = messageHandler.onMessageArrived;
-      rawClient.onConnectionLost = function (res) {
-        console.log('Connection Lost: ' + JSON.stringify(res));
-      }
+    function yTicksFn(n) {
+      return n + ' cm';
+    }
 
-      rawClient.connect({
-        onSuccess: function () {
-          // Once connected, subscribe to the topic relative to each sensor.
-          for (var i = 0; i < SENSORS.length; i++) {
-            rawClient.subscribe(SENSORS[i].topic);
-          }
+    Flotr.draw(container,
+      [
+        sensor.raw.chartOptions,
+        sensor.throttled.chartOptions
+      ],
+      {
+        colors: [
+          sensor.raw.chartColor,
+          sensor.throttled.chartColor
+        ],
+        title: sensor.title,
+        xaxis: {
+          showLabels: true,
+          mode: 'time',
+          noTicks: 8,
+          //tickFormatter: xTicksFn,
+          min: tsMin,
+          max: tsMax,
+          title: 'Time',
+          titleAlign: 'right'
+        },
+        yaxis: {
+          title: 'Distance',
+          max: 1.5 * sensor.maxDistance,
+          min: 0,
+          tickFormatter: yTicksFn,
+          titleAngle: 90
+        },
+        mouse: {
+          track: true,
         }
       });
-    }
-  });
-
-  // Set up up throttledClient for receiving real-time telemetry data that can
-  // be further manipulated in frequency and bandwidth.
-  mqttcool.openSession(MQTT_COOL_URL, 'demouser', '', {
-    onLsClient: function (lsClient) {
-      // Cache reference to the LightstreamerClient object for further
-      // manipulation on bandwidth.
-      lightStreamerClient = lsClient;
-    },
-
-    onConnectionSuccess: function (mqttCoolSession) {
-      throttledClient = mqttCoolSession.createClient(BROKER_URL);
-
-      // Set the message handler.
-      var messageHandler = new MessageHandler('throttled');
-      throttledClient.onMessageArrived = messageHandler.onMessageArrived;
-
-      throttledClient.connect({
-        // Once connected, subscribe to the topic relative to each sensor.
-        onSuccess: function () {
-          for (var i = 0; i < SENSORS.length; i++) {
-            throttledClient.subscribe(SENSORS[i].topic);
-          }
-        }
-      });
-    }
-  });
+  }
 });
 
-function refreshCharts(sensors, timeWindow, refreshInterval) {
-  return setInterval(function () {
-    var currentDate = new Date();
-    var tsMax = currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 - 3000;
-    var tsMin = new Date(tsMax - timeWindow * 1000).getTime();
-    for (var i = 0; i < sensors.length; i++) {
-      drawCharts(sensors[i], 10000, tsMin, tsMax);
-    }
-  }, refreshInterval);
-}
 
-function drawCharts(sensor, maxDistance, tsMin, tsMax) {
-  var container = document.getElementById(sensor.chartId);
-  function xTicksFn(n) {
-    return Math.round((n - sensor.startTimestamp) / 1000) + 's';
-  }
-
-  function yTicksFn(n) {
-    return n + ' cm';
-  }
-
-  Flotr.draw(container,
-    [
-      sensor.raw.chartOptions,
-      sensor.throttled.chartOptions
-    ],
-    {
-      colors: [
-        sensor.raw.chartColor,
-        sensor.throttled.chartColor
-      ],
-      title: sensor.title,
-      xaxis: {
-        showLabels: true,
-        mode: 'time',
-        noTicks: 8,
-        //tickFormatter: xTicksFn,
-        min: tsMin,
-        max: tsMax,
-        title: 'Time',
-        titleAlign: 'right'
-      },
-      yaxis: {
-        title: 'Distance',
-        max: 1.5 * sensor.maxDistance,
-        min: 0,
-        tickFormatter: yTicksFn,
-        titleAngle: 90
-      },
-      mouse: {
-        track: true,
-      }
-    });
-}
