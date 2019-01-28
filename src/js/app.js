@@ -20,7 +20,7 @@
 "use strict";
 $(function () {
   // Define urls for MQTT.Cool and the external MQTT broker.
-  const MQTT_COOL_URL = 'http://localhost:8080';
+  const MQTT_COOL_URL = 'https://cloud.mqtt.cool';
   const BROKER_URL = 'tcp://broker.mqtt.cool:1883';
 
   // Max values for sliders.
@@ -34,9 +34,9 @@ $(function () {
 
   // Sensor wrapper, which manges MQTT subscription to a specific IoT simulated 
   // sensor and manipulates chart displaying.
-  function Sensor(sensorId, chartId) {
+  function Sensor(sensorId, frameId) {
     this.sensorId = sensorId;
-    this.chartId = chartId;
+    this.frameId = frameId;
     this.topic = '/gambit/' + this.sensorId + '/telemetry';
     this.title = 'Sensor ' + sensorId;
     this.maxDistance = 0;
@@ -109,10 +109,10 @@ $(function () {
 
     // Initialize the Frequency Selector of this IoT Sensor
     function initFrequencySelector(onSlideEndCallback) {
-      $('#' + self.chartId + '_frequencySelector').attr('value', MAX_FREQ_VALUE);
+      $('#' + self.frameId + '_frequencySelector').attr('value', MAX_FREQ_VALUE);
       updateFreqText(MAX_FREQ_VALUE);
 
-      $('#' + self.chartId + '_frequencySelector').rangeslider({
+      $('#' + self.frameId + '_frequencySelector').rangeslider({
         polyfill: false,
         onSlide: function (position, value) {
           value = updateFreqText(value);
@@ -135,19 +135,19 @@ $(function () {
         if (value === MAX_FREQ_VALUE) {
           value = 'Unlimited';
         }
-        $('#' + self.chartId + '_freqText').text(value + ' updates/second');
+        $('#' + self.frameId + '_freqText').text(value + ' updates/second');
         return value;
       }
     };
 
     // Prepare template to be applied to every frequency selector.
     const frequencySelectorTemplate = '\
-      <div id="' + self.chartId + '_freqContainer" class="freqSliderContainer sliders"> \
+      <div id="' + self.frameId + '_freqContainer" class="freqSliderContainer sliders"> \
         <p class="rateDescription">Frequency Selector</p> \
-        <input id="' + self.chartId + '_frequencySelector" type="range" min="0.1" max="' + MAX_FREQ_VALUE + '" step="0.1" data-orientation="horizontal"> \
-        <p id="' + self.chartId + '_freqText" class="rateText"></p> \
+        <input id="' + self.frameId + '_frequencySelector" type="range" min="0.1" max="' + MAX_FREQ_VALUE + '" step="0.1" data-orientation="horizontal"> \
+        <p id="' + self.frameId + '_freqText" class="rateText"></p> \
       </div>';
-    $('#' + self.chartId).after(frequencySelectorTemplate);
+    $('#' + self.frameId).after(frequencySelectorTemplate);
 
     /// Trigger the Frequency Selector initialization passing the callback
     initFrequencySelector(function (subOptions) {
@@ -284,7 +284,7 @@ $(function () {
   }
 
   function drawCharts(sensor, maxDistance, tsMin, tsMax) {
-    var container = document.getElementById(sensor.chartId);
+    var container = document.getElementById(sensor.frameId);
     function xTicksFn(n) {
       return Math.round((n - sensor.startTimestamp) / 1000) + 's';
     }
