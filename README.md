@@ -49,7 +49,7 @@ on the sliders does not affect how data flow from the MQTT broker to the web
 page. Messages are displayed as continuous orange lines.
 
 You can see how the bandwidth and frequency constraints act on different levels.
-The bandwidth constraint globally applied the shared connection. On the other
+The bandwidth constraint globally applied to the shared connection. On the other
 hand, the frequency constraint is applied to each MQTT subscription individually.
 Both the constraints set an upper bound, which is dynamically managed by MQTT.Cool.
 Note that the updates are not queued and delayed, but resampled and conflated.
