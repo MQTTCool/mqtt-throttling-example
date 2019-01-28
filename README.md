@@ -46,7 +46,7 @@ slider. Messages are displayed as red points on the charts.
 - A [dedicated connection](https://docs.mqtt.cool/server/guides/MQTT.Cool+Getting+Started+Guide.html#dedicated_connection),
 whose MQTT subscriptions receive data as they come, which means that any change
 on the sliders does not affect how data flow from the MQTT broker to the web
-page. Messages are displayed as continuos orange lines.
+page. Messages are displayed as continuous orange lines.
 
 You can see how the bandwidth and frequency constraints act on different levels.
 The bandwidth constraint globally applied the shared connection. On the other
