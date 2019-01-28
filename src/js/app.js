@@ -107,6 +107,7 @@ $(function () {
       self[type].chartOptions.data = values;
     };
 
+    // Initialize the Frequency Selector of this IoT Sensor
     function initFrequencySelector(onSlideEndCallback) {
       $('#' + self.chartId + '_frequencySelector').attr('value', MAX_FREQ_VALUE);
       updateFreqText(MAX_FREQ_VALUE);
@@ -148,8 +149,7 @@ $(function () {
       </div>';
     $('#' + self.chartId).after(frequencySelectorTemplate);
 
-    // Initialize the relative frequency slider and pass the callback function
-    // to be invoked at every change.
+    /// Trigger the Frequency Selector initialization passing the callback
     initFrequencySelector(function (subOptions) {
       // Subscribe again to the same topic with updated options.
       throttledClient.subscribe(self.topic, subOptions);
@@ -275,7 +275,7 @@ $(function () {
   function refreshCharts(sensors, timeWindow, refreshInterval) {
     return setInterval(function () {
       var currentDate = new Date();
-      var tsMax = currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 - 3000;
+      var tsMax = currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 - 6000;
       var tsMin = new Date(tsMax - timeWindow * 1000).getTime();
       for (var i = 0; i < sensors.length; i++) {
         drawCharts(sensors[i], 10000, tsMin, tsMax);
