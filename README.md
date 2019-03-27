@@ -16,6 +16,7 @@ The **MQTT Throttling Demo** uses the MQTT.Cool Web Client API to show how
 MQTT.Cool can be used to send real-time telemetry data through the Web and,
 very important, how incoming update flow can be further manipulated in terms of
 bandwidth and frequency.
+You can read more details in the article ["Throttling MQTT Data"](https://github.com/MQTTCool/mqtt-throttling-example).
 
 The demo leverages the flexibility and power offered by [MIMIC MQTT Simulator](https://www.gambitcomm.com/site/mqttsimulator.php),
 by which it is extremely easy to generate an unlimited range of simulated
@@ -104,6 +105,7 @@ received real-time metrics.
 
 ## See Also
 
+* [Throttling MQTT Data](https://github.com/MQTTCool/mqtt-throttling-example)
 * [Check out all other demos on MQTT.Cool site](https://mqtt.cool/demos)
 
 ## MQTT.Cool Compatibility Notes
