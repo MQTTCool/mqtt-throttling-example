@@ -32,8 +32,8 @@ $(function () {
   const MAX_SAMPLES = 100;
   const CHART_REFRESH_INTERVAL = 50; // milliseconds
 
-  // Sensor wrapper, which manges MQTT subscription to a specific IoT simulated 
-  // sensor and manipulates chart displaying.
+  // Sensor abstraction, which manges MQTT subscription to a specific simulated  
+  // remote IoT sensor and manipulates chart displaying.
   function Sensor(sensorId, frameId) {
     this.sensorId = sensorId;
     this.frameId = frameId;
@@ -188,14 +188,14 @@ $(function () {
   refreshCharts(SENSORS, TIME_WINDOW, CHART_REFRESH_INTERVAL);
 
   // Setup message handler for processing MQTT messages received from 
-  // subscription and dispatches them to the relative sensor wrapper.
+  // subscription and dispatches them to the relative Sensor object.
   const MessageHandler = function (sensorType) {
     return function (message) {
-      const sensor = SENSORS.find(function (s) {
+      const sourceSensor = SENSORS.find(function (s) {
         return s.topic == message.destinationName;
       });
       const payload = JSON.parse(message.payloadString);
-      sensor.update(sensorType, payload);
+      sourceSensor.update(sensorType, payload);
     };
   }
 
