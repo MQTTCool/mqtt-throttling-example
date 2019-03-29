@@ -275,7 +275,7 @@ $(function () {
   function refreshCharts(sensors, timeWindow, refreshInterval) {
     return setInterval(function () {
       var currentDate = new Date();
-      var tsMax = currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 - 6000;
+      var tsMax = currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 - 500;
       var tsMin = new Date(tsMax - timeWindow * 1000).getTime();
       for (var i = 0; i < sensors.length; i++) {
         drawCharts(sensors[i], 10000, tsMin, tsMax);
