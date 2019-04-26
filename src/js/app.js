@@ -34,7 +34,7 @@ $(function () {
 
   // Sensor abstraction, which manges MQTT subscription to a specific simulated  
   // remote IoT sensor and manipulates chart displaying.
-  function Sensor(sensorId, frameId) {
+  function Sensor(sensorId, frameId, defaultFrequency) {
     this.sensorId = sensorId;
     this.frameId = frameId;
     this.topic = '/gambit/' + this.sensorId + '/telemetry';
@@ -109,8 +109,8 @@ $(function () {
 
     // Initialize the Frequency Selector of this IoT Sensor
     function initFrequencySelector(onSlideEndCallback) {
-      $('#' + self.frameId + '_frequencySelector').attr('value', MAX_FREQ_VALUE);
-      updateFreqText(MAX_FREQ_VALUE);
+      $('#' + self.frameId + '_frequencySelector').attr('value', defaultFrequency);
+      updateFreqText(defaultFrequency);
 
       $('#' + self.frameId + '_frequencySelector').rangeslider({
         polyfill: false,
@@ -144,7 +144,7 @@ $(function () {
     const frequencySelectorTemplate = '\
       <div id="' + self.frameId + '_freqContainer" class="freqSliderContainer sliders"> \
         <p class="rateDescription">Frequency Selector</p> \
-        <input id="' + self.frameId + '_frequencySelector" type="range" min="0.1" max="' + MAX_FREQ_VALUE + '" step="0.1" data-orientation="horizontal"> \
+        <input id="' + self.frameId + '_frequencySelector" type="range"min="0.1" max="' + MAX_FREQ_VALUE + '" step="0.1" data-orientation="horizontal"> \
         <p id="' + self.frameId + '_freqText" class="rateText"></p> \
       </div>';
     $('#' + self.frameId).after(frequencySelectorTemplate);
@@ -157,16 +157,16 @@ $(function () {
   };
 
   const SENSORS = [
-    new Sensor('20:19:AB:F4:0D:0D', 'sensor1'),
-    new Sensor('20:19:AB:F4:0D:0E', 'sensor2'),
-    new Sensor('20:19:AB:F4:0D:0F', 'sensor3'),
-    new Sensor('20:19:AB:F4:0D:10', 'sensor4'),
-    new Sensor('20:19:AB:F4:0D:11', 'sensor5'),
-    new Sensor('20:19:AB:F4:0D:12', 'sensor6'),
-    new Sensor('20:19:AB:F4:0D:13', 'sensor7'),
-    new Sensor('20:19:AB:F4:0D:14', 'sensor8'),
-    new Sensor('20:19:AB:F4:0D:15', 'sensor9'),
-    new Sensor('20:19:AB:F4:0D:16', 'sensor10')
+    new Sensor('20:19:AB:F4:0D:0D', 'sensor1', 1.2),
+    new Sensor('20:19:AB:F4:0D:0E', 'sensor2', MAX_FREQ_VALUE),
+    new Sensor('20:19:AB:F4:0D:0F', 'sensor3', 2.0),
+    new Sensor('20:19:AB:F4:0D:10', 'sensor4', MAX_FREQ_VALUE),
+    new Sensor('20:19:AB:F4:0D:11', 'sensor5', MAX_FREQ_VALUE),
+    new Sensor('20:19:AB:F4:0D:12', 'sensor6', MAX_FREQ_VALUE),
+    new Sensor('20:19:AB:F4:0D:13', 'sensor7', 0.3),
+    new Sensor('20:19:AB:F4:0D:14', 'sensor8', MAX_FREQ_VALUE),
+    new Sensor('20:19:AB:F4:0D:15', 'sensor9', MAX_FREQ_VALUE),
+    new Sensor('20:19:AB:F4:0D:16', 'sensor10', MAX_FREQ_VALUE)
   ];
 
   // MqttClient instance for receiving throttled data
