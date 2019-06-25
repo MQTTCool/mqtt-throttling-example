@@ -41,6 +41,7 @@ $(function () {
     this.title = 'Sensor ' + sensorId;
     this.maxDistance = 0;
     this.subCounter = 0;
+    this.defaultFrequency = defaultFrequency;
 
     // Defines properties for the non-throttled chart
     this.raw = {
@@ -212,7 +213,7 @@ $(function () {
         // Once connected, subscribe to the topic relative to each sensor.
         onSuccess: function () {
           for (var i = 0; i < SENSORS.length; i++) {
-            throttledClient.subscribe(SENSORS[i].topic);
+            throttledClient.subscribe(SENSORS[i].topic,  { 'maxFrequency': SENSORS[i].defaultFrequency} );
           }
         }
       });
@@ -275,10 +276,10 @@ $(function () {
   function refreshCharts(sensors, timeWindow, refreshInterval) {
     return setInterval(function () {
       var currentDate = new Date();
-      var tsMax = currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 - 3000;
-      var tsMin = new Date(tsMax - timeWindow * 1000).getTime();
-      for (var i = 0; i < sensors.length; i++) {
-        drawCharts(sensors[i], 10000, tsMin, tsMax);
+      var tsMin = new Date(currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 + 5000);
+      var tsMax = new Date(tsMin.getTime() + timeWindow * 1000);
+        for (var i = 0; i < sensors.length; i++) {
+        drawCharts(sensors[i], 10000, tsMin.getTime(), tsMax.getTime());
       }
     }, refreshInterval);
   }
