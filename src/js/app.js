@@ -292,9 +292,6 @@ $(function () {
     }
 
     const data = sensor.raw.chartOptions.data
-    if (data.length> 0) {
-      console.log("From: " + new Date(data[0][0]) + ", to: " + new Date(data[data.length-1][0]));
-    }
     Flotr.draw(container,
       [
         sensor.raw.chartOptions,
