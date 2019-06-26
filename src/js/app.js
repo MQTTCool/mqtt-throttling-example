@@ -98,8 +98,8 @@ $(function () {
       var minute = timestamp.substr(11, 2);
       var second = timestamp.substr(13, 2);
       var milliseconds = timestamp.substr(16, 3);
-      var realTimeTimestamp = new Date(year + '-' + month + '-' + day + 'T' + hour
-        + ':' + minute + ':' + second + '.' + milliseconds).getTime();
+      var realTimeTimestamp = new Date(year, month -1, day, hour, minute,
+           second, milliseconds).getTime();
 
       values.push([realTimeTimestamp, realTimeDistance]);
       if (self[type].counter++ > MAX_SAMPLES) {
@@ -274,26 +274,27 @@ $(function () {
   }
 
   function refreshCharts(sensors, timeWindow, refreshInterval) {
+    var currentDate = new Date();
     return setInterval(function () {
       var currentDate = new Date();
-      var tsMin = new Date(currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 + 5000);
-      var tsMax = new Date(tsMin.getTime() + timeWindow * 1000);
-        for (var i = 0; i < sensors.length; i++) {
-        drawCharts(sensors[i], 10000, tsMin.getTime(), tsMax.getTime());
+      var tsMax = currentDate.getTime() + currentDate.getTimezoneOffset() * 60 * 1000 - 3000;
+      var tsMin = new Date(tsMax - timeWindow * 1000).getTime();
+      for (var i = 0; i < sensors.length; i++) {
+        drawCharts(sensors[i], 10000, tsMin, tsMax);
       }
     }, refreshInterval);
   }
 
   function drawCharts(sensor, maxDistance, tsMin, tsMax) {
     var container = document.getElementById(sensor.frameId);
-    function xTicksFn(n) {
-      return Math.round((n - sensor.startTimestamp) / 1000) + 's';
-    }
-
     function yTicksFn(n) {
       return n + ' cm';
     }
 
+    const data = sensor.raw.chartOptions.data
+    if (data.length> 0) {
+      console.log("From: " + new Date(data[0][0]) + ", to: " + new Date(data[data.length-1][0]));
+    }
     Flotr.draw(container,
       [
         sensor.raw.chartOptions,
@@ -308,6 +309,7 @@ $(function () {
         xaxis: {
           showLabels: true,
           mode: 'time',
+          timeMode: 'local',
           noTicks: 8,
           //tickFormatter: xTicksFn,
           min: tsMin,
