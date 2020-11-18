@@ -143,10 +143,10 @@ $(function () {
 
     // Prepare template to be applied to every frequency selector.
     const frequencySelectorTemplate = '\
-      <div id="' + self.frameId + '_freqContainer" class="freqSliderContainer sliders"> \
+      <div id="' + self.frameId + '_freqContainer" class="freqSliderContainer"> \
         <p class="rateDescription">Frequency Selector</p> \
-        <input id="' + self.frameId + '_frequencySelector" type="range"min="0.1" max="' + MAX_FREQ_VALUE + '" step="0.1" data-orientation="horizontal"> \
-        <p id="' + self.frameId + '_freqText" class="rateText"></p> \
+        <input id="' + self.frameId + '_frequencySelector" type="range"min="0.1" max="' + MAX_FREQ_VALUE + '" step="0.1" data-rangeslider data-orientation="horizontal" > \
+        <p id="' + self.frameId + '_freqText" class="rateText">test</p> \
       </div>';
     $('#' + self.frameId).after(frequencySelectorTemplate);
 

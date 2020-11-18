@@ -79,15 +79,48 @@ html, body {
   height: 900px;
 }
 
-.sliders {
-  position: absolute; 
-  right: 25px;
-  width: 110px;
+.sensorContainer {
+  display: inline-block;
+  font-size: 0.7em;
+  padding: 1%;
+  width: 700px;
+  height: 15%;
+}
+
+.chart {
+  width: 100%;
+  height: 100%;
 }
 
 .freqSliderContainer {
   top: 30px;
   font-size: 1.0em;
+  padding: 0px;
+  text-align: center;
+}
+
+.rangeslider {
+  display: inline-block
+}
+
+.rangeslider--horizontal {
+  height: 7px;
+  width: 20%;
+}
+
+.rateDescription {
+  display: inline-block;
+  font-size: 0.8em;
+  color: #ff3333;
+}
+
+.rateText {
+  display: inline-block;
+  font-size: 0.7em;
+  color: #ff3333;
+  text-align: left;
+  margin-left: 1%;
+  width: 15%;
 }
 
 .bandwidthSliderContainer {
@@ -96,51 +129,10 @@ html, body {
   margin: 20px auto;
 }
 
-.rateDescription {
-  position: absolute;
-  top: -30px;
-  font-size: 0.8em;
-  color: #ff3333;
-}
-
 .bandwidthDescription {
   position: absolute;
   top: -30px;
   font-size: 0.8em;
   color: #ff3333;
-}
-
-.rateText {
-  position: absolute;
-  top: 5px;
-  font-size: 0.7em;
-  color: #ff3333;
-}
-
-.chartContainer {
-  position: absolute;
-  top: 5%;
-  width: 47%;
-  height: 100%;
-  font-size: 0.7em;
-}
-
-#chartContainerLeft {
-  left: 2%;
-}
-
-#chartContainerRight {
-  right: 2%;
-}
-
-.chart {
-  width: 80%;
-  height: 100%;
-}
-
-.sensorContainer {
-  position: relative;
-  width: 100%;
-  height: 15%;
 }
 
