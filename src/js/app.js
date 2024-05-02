@@ -20,7 +20,7 @@
 "use strict";
 $(function () {
   // Define urls for MQTT.Cool and the external MQTT broker.
-  const MQTT_COOL_URL = 'https://cloud.mqtt.cool';
+  const MQTT_COOL_URL = 'http://localhost:8080';
   const BROKER_URL = 'tcp://broker.mqtt.cool:1883';
 
   // Max values for sliders.
